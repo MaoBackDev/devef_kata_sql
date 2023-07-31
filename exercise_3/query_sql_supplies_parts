@@ -70,16 +70,3 @@ CREATE TABLE IF NOT EXISTS public."supplies"
     ON DELETE SET NULL
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-END;
