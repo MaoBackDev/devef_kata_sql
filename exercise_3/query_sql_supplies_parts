@@ -1,0 +1,85 @@
+-- Ejercicio No. 3 Consta de llevar el control de suministros de piezas.
+-- Se crearon 5v tablas especificadas de la siguiente manera:
+-- categories: almacena todas las categorias que pueden ser asociadas a las piezas.
+-- cities: almacena todas las ciudades donde pueden estar ubicados los proveedores
+-- parts: almacena la información de las piezas. Está relacionada con la tabla de cartegories.
+-- suppliers: almacena la información de los proveedores. Esta relacionada con la tabla cities.
+-- supplies: almacena toda la información referente a los suministros que realiza cada proveedor
+-- se encarga de almacenar el histórico de suministro entre un proveedor y una pieza.
+
+
+CREATE TABLE IF NOT EXISTS public."categories"
+(
+    category_id serial NOT NULL,
+    code bit varying(30) NOT NULL UNIQUE,
+    name bit varying(30) NOT NULL,
+    PRIMARY KEY (category_id)
+);
+
+CREATE TABLE IF NOT EXISTS public."cities"
+(
+    city_id serial NOT NULL,
+    code bit varying(30) NOT NULL UNIQUE,
+    name bit varying(80) NOT NULL,
+    PRIMARY KEY (city_id)
+);
+
+CREATE TABLE IF NOT EXISTS public."parts"
+(
+    part_id serial,
+    code bit varying(30) NOT NULL UNIQUE,
+    name bit varying(50) NOT NULL,
+    price double precision NOT NULL,
+    color bit varying(20) NOT NULL,
+    category integer NOT NULL,
+    PRIMARY KEY (part_id),
+	CONSTRAINT fk_category_piece FOREIGN KEY (category)
+    REFERENCES public."categories" (category_id)
+    ON UPDATE SET NULL
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS public."suppliers"
+(
+    supplier_id serial NOT NULL,
+    code bit varying(30) NOT NULL UNIQUE,
+    name bit varying(150) NOT NULL,
+    address bit varying(100) NOT NULL,
+    city integer NOT NULL,
+    PRIMARY KEY (supplier_id),
+	CONSTRAINT fk_city_supplier FOREIGN KEY (city)
+    REFERENCES public.cities (city_id)
+    ON UPDATE SET NULL
+    ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS public."supplies"
+(
+    supply_id serial NOT NULL,
+    created_at date NOT NULL DEFAULT CURRENT_DATE,
+    part_id integer NOT NULL,
+    supplier_id integer NOT NULL,
+    PRIMARY KEY (supply_id),
+	CONSTRAINT fk_part_supply FOREIGN KEY (part_id)
+    REFERENCES public.parts (part_id)
+    ON UPDATE SET NULL
+    ON DELETE SET NULL,
+	CONSTRAINT fk_supplier_supply FOREIGN KEY (supplier_id)
+    REFERENCES public.suppliers (supplier_id)
+    ON UPDATE SET NULL
+    ON DELETE SET NULL
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+END;
