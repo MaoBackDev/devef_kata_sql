@@ -1,0 +1,98 @@
+CREATE TABLE IF NOT EXISTS brands
+(
+    brand_id serial NOT NULL PRIMARY KEY ,
+    name character varying(30) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS models
+(
+    model_id serial NOT NULL PRIMARY KEY,
+    name character varying(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS equipments
+(
+    equipment_id serial NOT NULL PRIMARY KEY,
+    driver_airbag boolean NOT NULL DEFAULT false,
+    central_locking boolean NOT NULL DEFAULT false,
+    copilot_airbag boolean NOT NULL DEFAULT false,
+    air_conditioning boolean NOT NULL DEFAULT false,
+    is_extra boolean NOT NULL DEFAULT false,
+    model integer NOT NULL,
+	FOREIGN KEY (model)
+    REFERENCES models (model_id)
+);
+
+CREATE TABLE IF NOT EXISTS stores
+(
+    store_id serial NOT NULL PRIMARY KEY ,
+    nit character varying(30) NOT NULL UNIQUE,
+    name character varying(80) NOT NULL,
+    address character varying(100)
+);
+
+CREATE TABLE IF NOT EXISTS official_services
+(
+    official_service_id serial NOT NULL PRIMARY KEY,
+    name character varying(100) NOT NULL,
+    nit character varying(30) NOT NULL UNIQUE,
+    address character varying(100) NOT NULL,
+    store integer NOT NULL,
+	FOREIGN KEY (store)
+    REFERENCES stores (store_id)
+);
+
+CREATE TABLE IF NOT EXISTS sellers
+(
+    seller_id serial NOT NULL PRIMARY KEY,
+    document character varying(20) NOT NULL UNIQUE,
+    first_name character varying(100) NOT NULL,
+    last_name character varying(100) NOT NULL,
+    email character varying(150) NOT NULL UNIQUE,
+    phone character varying(20) NOT NULL,
+    store integer NOT NULL,
+	FOREIGN KEY (store)
+    REFERENCES public.stores (store_id)
+);
+
+CREATE TABLE IF NOT EXISTS vehicles
+(
+    vehicle_id serial NOT NULL PRIMARY KEY,
+    price numeric(10,2) NOT NULL,
+    disccount numeric(10,2) NOT NULL DEFAULT 0.0,
+    chassis_number character varying NOT NULL UNIQUE,
+    brand integer NOT NULL,
+    model integer NOT NULL,
+    transmission character varying NOT NULL,
+    motor_type character varying NOT NULL,
+    fiscal_power character varying NOT NULL,
+    engine_displacement character varying NOT NULL,
+	FOREIGN KEY (brand)
+    REFERENCES brands (brand_id),
+	FOREIGN KEY (model)
+    REFERENCES models (model_id)
+);
+
+CREATE TABLE IF NOT EXISTS stock
+(
+    stock_id serial NOT NULL PRIMARY KEY,
+    vehicle_id integer NOT NULL,
+    amount integer NOT NULL DEFAULT 0,
+	FOREIGN KEY (vehicle_id)
+    REFERENCES vehicles(vehicle_id)
+);
+
+CREATE TABLE IF NOT EXISTS sales
+(
+    sale_id serial NOT NULL PRIMARY KEY,
+    created_at date NOT NULL DEFAULT CURRENT_DATE,
+    total_due numeric(10,2) NOT NULL,
+    is_stock boolean NOT NULL DEFAULT false,
+    type_payment character varying(20) NOT NULL,
+    seller integer NOT NULL,
+    vehicle integer NOT NULL,
+	FOREIGN KEY (seller)
+    REFERENCES public.sellers (seller_id),
+	FOREIGN KEY (vehicle)
+    REFERENCES public.vehicles (vehicle_id)
+);

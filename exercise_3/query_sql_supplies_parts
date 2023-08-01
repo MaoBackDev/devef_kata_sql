@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS public."supplies"
     created_at date NOT NULL DEFAULT CURRENT_DATE,
     part_id integer NOT NULL,
     supplier_id integer NOT NULL,
+    amount integer NOT NULL DEFAULT 0, 
     PRIMARY KEY (supply_id),
 	CONSTRAINT fk_part_supply FOREIGN KEY (part_id)
     REFERENCES public.parts (part_id)
